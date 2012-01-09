@@ -7,6 +7,7 @@ from django.contrib.sites.models import get_current_site
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 
 from paypal.standard.forms import PayPalPaymentsForm
@@ -91,7 +92,7 @@ class OffsitePaypalBackend(object):
 
     @csrf_exempt
     def paypal_successful_return_view(self, request):
-        return render_to_response("shop_paypal/success.html", {})
+        return HttpResponseRedirect(self.shop.get_finished_url())
 
     #===========================================================================
     # Signal listeners
