@@ -110,4 +110,4 @@ class OffsitePaypalBackend(object):
         order = self.shop.get_order_for_id(order_id)
         # The actual request to the shop system
         self.shop.confirm_payment(order, amount, transaction_id, self.backend_name)
-        self.shop.mark_order_complete(order)
+#        self.shop.mark_order_complete(order)
