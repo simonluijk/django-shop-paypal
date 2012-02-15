@@ -115,4 +115,4 @@ class OffsitePaypalBackend(object):
         # The actual request to the shop system
         # TODO: Should check ipn_obj.flag
         self.shop.confirm_payment(order, amount, transaction_id, self.backend_name)
-#        self.shop.mark_order_complete(order)
+        self.shop.mark_order_complete(order)
