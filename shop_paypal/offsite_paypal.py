@@ -14,6 +14,32 @@ from paypal.standard.forms import PayPalPaymentsForm
 from paypal.standard.ipn.signals import payment_was_successful as success_signal
 
 
+PAYPAL_COUNTRY_TO_LOCALE = {
+    'AU': 'AU',
+    'AT': 'AT',
+    'BE': 'BE',
+    'BR': 'BR',
+    'CA': 'CA',
+    'CH': 'CH',
+    'CN': 'CN',
+    'DE': 'DE',
+    'ES': 'ES',
+    'GB': 'GB',
+    'FR': 'FR',
+    'IT': 'IT',
+    'NL': 'NL',
+    'PL': 'PL',
+    'PT': 'PT',
+    'RU': 'RU',
+    'US': 'US',
+}
+
+PAYPAL_LANGUAGE_TO_LOCALE = {
+    'en': 'GB',
+    'fr': 'FR',
+}
+
+
 class OffsitePaypalBackend(object):
     '''
     Glue code to let django-SHOP talk to django-paypal's.
@@ -91,7 +117,22 @@ class OffsitePaypalBackend(object):
             "cancel_return": '%s://%s%s' % (url_scheme, url_domain,
                                             self.shop.get_cancel_url()),
         }
-        if hasattr(settings, 'PAYPAL_LC'):
+
+        if hasattr(order, 'shipping_address_country_code'):
+            country_code = order.shipping_address_country_code
+            try:
+                paypal_dict['lc'] = PAYPAL_COUNTRY_TO_LOCALE[country_code]
+            except KeyError:
+                pass
+
+        if not paypal_dict.get('lc'):
+            lang = request.LANGUAGE_CODE
+            try:
+                paypal_dict['lc'] = PAYPAL_LANGUAGE_TO_LOCALE[lang]
+            except KeyError:
+                pass
+
+        if not paypal_dict.get('lc') and hasattr(settings, 'PAYPAL_LC'):
             paypal_dict['lc'] = settings.PAYPAL_LC
 
         # Create the instance.
